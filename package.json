@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node_modules/.bin/webpack-dev-server --inline --hot",
     "build": "WEBPACK_ENV=production node_modules/.bin/webpack --optimize-minimize --progress --color",
-    "deploy": "npm run build; surge -p . -d tim-js-starter.surge.sh"
+    "deploy": "npm run build; surge -p . -d hw4-blog-jakerber.surge.sh"
   },
   "repository": {
     "type": "git",
@@ -43,8 +43,12 @@
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
+    "axios": "^0.13.1",
+    "marked": "^0.3.6",
     "react": "^15.2.1",
     "react-dom": "^15.2.1",
+    "react-marked": "^0.3.1",
+    "react-popup": "^0.4.2",
     "react-redux": "^4.4.5",
     "react-router": "^2.5.2",
     "redux": "^3.5.2",

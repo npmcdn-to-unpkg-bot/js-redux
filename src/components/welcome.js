@@ -8,8 +8,6 @@ import Controls from '../containers/controls';
 const Welcome = () => {
   return (
     <div>
-      react+redux+react-router+webpack+babel+eslint starter
-
       <Counter />
       <Controls />
     </div>

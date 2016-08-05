@@ -1,9 +1,10 @@
 import { combineReducers } from 'redux';
 
-import CountReducer from './count-reducer';
+import Reducer from './reducer';
 
+// use reducer 'blog_posts' in app
 const rootReducer = combineReducers({
-  count: CountReducer,
+  blog_posts: Reducer,
 });
 
 export default rootReducer;
