@@ -4,8 +4,7 @@ import { browserHistory } from 'react-router';
 // credit to Tim Tregubov and the cs52 hw4 walkthrough
 // hosted at http://cs52.me/assignments/hw4/
 
-const ROOT_URL = 'https://cs52-blog.herokuapp.com/api';
-const API_KEY = '?key=jakerber';
+const ROOT_URL = 'https://blog-server-hw5.herokuapp.com/api';
 
 // keys for actiontypes
 export const ActionTypes = {
@@ -22,11 +21,12 @@ export const ActionTypes = {
 // fetch all posts and add data to payload
 export function fetchposts() {
   return (dispatch) => {
-    axios.get(`${ROOT_URL}/posts${API_KEY}`).then(response => {
+    axios.get(`${ROOT_URL}/posts/`).then(response => {
       dispatch({
         type: ActionTypes.FETCH_POSTS,
         payload: { postsAll: response.data },
       });
+      console.log(response.data);
     }).catch(error => {
       console.log(error);
     });
@@ -36,7 +36,7 @@ export function fetchposts() {
 // fetch a single post through it's id and add data to payload
 export function fetchpost(id) {
   return (dispatch) => {
-    axios.get(`${ROOT_URL}/posts/${id}${API_KEY}`).then(response => {
+    axios.get(`${ROOT_URL}/posts/${id}`).then(response => {
       dispatch({
         type: ActionTypes.FETCH_POST,
         payload: { postSingle: response.data },
@@ -57,7 +57,7 @@ export function createpost(post) {
       content: post.content,
       tags: post.tags,
     };
-    axios.post(`${ROOT_URL}/posts/${API_KEY}`, data).then(response => {
+    axios.post(`${ROOT_URL}/posts/`, data).then(response => {
       browserHistory.push('/');
       dispatch({
         type: ActionTypes.CREATE_POST,
@@ -80,7 +80,7 @@ export function updatepost(post, id) {
       content: post.content,
       tags: post.tags,
     };
-    axios.put(`${ROOT_URL}/posts/${id}${API_KEY}`, data).then(response => {
+    axios.put(`${ROOT_URL}/posts/${id}`, data).then(response => {
       dispatch({
         type: ActionTypes.UPDATE_POST,
         payload: null,
@@ -98,7 +98,7 @@ export function updatepost(post, id) {
 // no payload necessary
 export function deletepost(id) {
   return (dispatch) => {
-    axios.delete(`${ROOT_URL}/posts/${id}${API_KEY}`).then(response => {
+    axios.delete(`${ROOT_URL}/posts/${id}`).then(response => {
       browserHistory.push('/');
       dispatch({
         type: ActionTypes.DELETE_POST,
