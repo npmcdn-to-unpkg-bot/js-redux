@@ -4,7 +4,7 @@ import { browserHistory } from 'react-router';
 // credit to Tim Tregubov and the cs52 hw4 walkthrough
 // hosted at http://cs52.me/assignments/hw4/
 
-const ROOT_URL = 'https://blog-server-hw5.herokuapp.com/api';
+const ROOT_URL = 'http://localhost:9090/api';
 
 // keys for actiontypes
 export const ActionTypes = {
@@ -13,6 +13,9 @@ export const ActionTypes = {
   CREATE_POST: 'CREATE_POST',
   UPDATE_POST: 'UPDATE_POST',
   DELETE_POST: 'DELETE_POST',
+  AUTH_USER: 'AUTH_USER',
+  DEAUTH_USER: 'DEAUTH_USER',
+  AUTH_ERROR: 'AUTH_ERROR',
 };
 
 // all actions functions here were adapted from http://cs52.me/assignments/hw4/
@@ -57,7 +60,7 @@ export function createpost(post) {
       content: post.content,
       tags: post.tags,
     };
-    axios.post(`${ROOT_URL}/posts/`, data).then(response => {
+    axios.post(`${ROOT_URL}/posts`, data, { headers: { authorization: localStorage.getItem('token') } }).then(response => {
       browserHistory.push('/');
       dispatch({
         type: ActionTypes.CREATE_POST,
@@ -80,7 +83,7 @@ export function updatepost(post, id) {
       content: post.content,
       tags: post.tags,
     };
-    axios.put(`${ROOT_URL}/posts/${id}`, data).then(response => {
+    axios.put(`${ROOT_URL}/posts/${id}`, data, { headers: { authorization: localStorage.getItem('token') } }).then(response => {
       dispatch({
         type: ActionTypes.UPDATE_POST,
         payload: null,
@@ -98,7 +101,7 @@ export function updatepost(post, id) {
 // no payload necessary
 export function deletepost(id) {
   return (dispatch) => {
-    axios.delete(`${ROOT_URL}/posts/${id}`).then(response => {
+    axios.delete(`${ROOT_URL}/posts/${id}`, { headers: { authorization: localStorage.getItem('token') } }).then(response => {
       browserHistory.push('/');
       dispatch({
         type: ActionTypes.DELETE_POST,
@@ -108,5 +111,69 @@ export function deletepost(id) {
     }).catch(error => {
       console.log(error);
     });
+  };
+}
+
+// credit for below to Tim Tregubov and the cs52 hw5 part 2 walkthrough
+// hosted at http://cs52.me/assignments/hw5p2/
+
+// trigger to deauth if there is error
+// can also use in your error reducer if you have one to display an error message
+export function authError(error) {
+  return {
+    type: ActionTypes.AUTH_ERROR,
+    message: error,
+  };
+}
+
+// takes in an object with email and password (minimal user object)
+// returns a thunk method that takes dispatch as an argument (just like our create post method really)
+export function signinUser({ email, password }) {
+  return (dispatch) => {
+    // does an axios.post on the /signin endpoint
+    console.log(`i have ${email} and ${password}`);
+    axios.post(`${ROOT_URL}/signin/`, { email, password }).then(response => {
+      // on success does:
+      //  dispatch({ type: ActionTypes.AUTH_USER });
+      //  localStorage.setItem('token', response.data.token);
+      dispatch({ type: ActionTypes.AUTH_USER });
+      localStorage.setItem('token', response.data.token);
+      browserHistory.push('/');
+    })
+    .catch((error) => {
+      // on error should dispatch(authError(`Sign In Failed: ${error.response.data}`));
+      dispatch(authError(`Sign In Failed: ${error.response.data}`));
+    });
+  };
+}
+
+// takes in an object with email and password (minimal user object)
+// returns a thunk method that takes dispatch as an argument (just like our create post method really)
+export function signupUser({ email, password, username }) {
+  return (dispatch) => {
+    console.log(`i have ${email}, ${username}, and ${password}`);
+    // does an axios.post on the /signup endpoint (only difference from above)
+    axios.post(`${ROOT_URL}/signup/`, { email, password, username }).then(response => {
+      // on success does:
+      //  dispatch({ type: ActionTypes.AUTH_USER });
+      //  localStorage.setItem('token', response.data.token);
+      dispatch({ type: ActionTypes.AUTH_USER });
+      localStorage.setItem('token', response.data.token);
+      browserHistory.push('/');
+    })
+    .catch((error) => {
+      // on error should dispatch(authError(`Sign Up Failed: ${error.response.data}`));
+      dispatch(authError(`Sign Up Failed: ${error.response.data}`));
+    });
+  };
+}
+
+// deletes token from localstorage
+// and deauths
+export function signoutUser() {
+  return (dispatch) => {
+    localStorage.removeItem('token');
+    dispatch({ type: ActionTypes.DEAUTH_USER });
+    browserHistory.push('/');
   };
 }

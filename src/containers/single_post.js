@@ -34,6 +34,7 @@ class SinglePost extends Component {
   }
   // function below adapted from http://stackoverflow.com/questions/34884114/react-js-componentwillreceiveprops-only-updates-every-other-this-props-update
   // componentWillReceiveProps recieving new props then updating state
+  // function now recieves author too
   componentWillReceiveProps(recvProps) {
     // set state fields vars when new props are recieved
     if (recvProps.post) {
@@ -41,7 +42,9 @@ class SinglePost extends Component {
         title: recvProps.post.title,
         tags: recvProps.post.tags,
         content: recvProps.post.content,
+        author: recvProps.post.author,
       });
+      console.log(`author is ${this.state.title}`);
     }
   }
   /* ==================== changes while editing ================*/
@@ -95,6 +98,7 @@ class SinglePost extends Component {
             <input className="edit-post-bpf" onChange={this.onContentChange} type="text" value={this.state.content} />
             <i className="material-icons" onClick={this.doneEditing}>check_circle</i>
             <h3>*Markdown syntax supported</h3>
+            <h3>*Post cannot be edited if you are not signed in</h3>
           </div>
         </div>
       );
@@ -107,7 +111,7 @@ class SinglePost extends Component {
           </div>
         );
       } else {
-        // display a post
+        // display a post with author for props
         return (
           <div>
             <i className="material-icons" onClick={this.backHome}>backspace</i><h3 id="back-bpf">BACK</h3>
@@ -115,6 +119,7 @@ class SinglePost extends Component {
               <h2 id="bgf-header">&#8226; TITLE:</h2><div id="bgf-content" dangerouslySetInnerHTML={{ __html: marked(this.props.post.title || '') }}></div>
               <h2 id="bgf-header">&#8226; TAGS:</h2><div id="bgf-content" dangerouslySetInnerHTML={{ __html: marked(this.props.post.tags || '') }}></div>
               <h2 id="bgf-header">&#8226; CONTENT:</h2><div id="bgf-content" dangerouslySetInnerHTML={{ __html: marked(this.props.post.content || '') }}></div>
+              <h2>Posted by {this.props.post.author}</h2>
               <i className="material-icons" onClick={this.deleteCurrentPost}>delete_forever</i>
               <i className="material-icons" onClick={this.beginEditing}>mode_edit</i>
             </div>

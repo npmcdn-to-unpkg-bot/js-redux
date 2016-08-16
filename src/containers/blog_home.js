@@ -9,30 +9,53 @@ import { fetchposts } from '../actions';
 // hosted at http://cs52.me/assignments/hw4/
 
 class BlogHome extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
   componentWillMount() {
     // get posts from action
     this.props.fetchposts();
   }
 
   render() {
-    // get map holding posts from props
-    let AllPosts = this.props.all.map((post, key) => {
+    const auth = this.props.authenticated;
+    console.log(`read ${auth}`);
+    if (auth === true) {
+      // get map holding posts from props
+      let AllPosts = this.props.all.map((post, key) => {
+        return (
+          <BlogPost title={post.title} postId={post.id} tags={post.tags} key={key} />
+        );
+      });
       return (
-        <BlogPost title={post.title} postId={post.id} tags={post.tags} key={key} />
+        <div className="index">
+          <Header />
+          <h1>User verified. Welcome!</h1>
+          <h1>Posts</h1>
+          {AllPosts}
+        </div>
       );
-    });
-
-    return (
-      <div className="index">
-        <Header />
-        <h1>Posts</h1>
-        {AllPosts}
-      </div>
-    );
+    } else {
+      // get map holding posts from props
+      let AllPosts = this.props.all.map((post, key) => {
+        return (
+          <BlogPost title={post.title} postId={post.id} tags={post.tags} key={key} />
+        );
+      });
+      return (
+        <div className="index">
+          <Header />
+          <h1>Sign in to add a post!</h1>
+          <h1>Posts</h1>
+          {AllPosts}
+        </div>
+      );
+    }
   }
 }
 
 
-const toPropsSendState = (state) => ({ all: state.blog_posts.all });
+const toPropsSendState = (state) => ({ all: state.blog_posts.all, authenticated: state.auth.authenticated });
 
 export default connect(toPropsSendState, { fetchposts })(BlogHome);
