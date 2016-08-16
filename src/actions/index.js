@@ -4,7 +4,7 @@ import { browserHistory } from 'react-router';
 // credit to Tim Tregubov and the cs52 hw4 walkthrough
 // hosted at http://cs52.me/assignments/hw4/
 
-const ROOT_URL = 'https://hw5p2-backend.herokuapp.com/api';
+const ROOT_URL = 'http://hw5p2-backend.herokuapp.com/api';
 
 // keys for actiontypes
 export const ActionTypes = {
